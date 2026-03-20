@@ -34,7 +34,10 @@ RUN echo 'PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ 
 
 #ros packages
 RUN apt-get update && apt-get install -y \
-  ros-humble-plotjuggler*
+  ros-humble-plotjuggler* \
+  ros-humble-rqt* \
+  ros-humble-rviz* 
+
 
 # Set the default shell
 SHELL ["/bin/bash", "-c"]
