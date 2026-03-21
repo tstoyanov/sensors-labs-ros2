@@ -13,6 +13,9 @@ class EncoderSubscriber : public rclcpp::Node
     void topic_callback(const lab01::msg::Encoder & msg) const;
     rclcpp::Subscription<lab01::msg::Encoder>::SharedPtr subscription_;
     rclcpp::Publisher<sensor_msgs::msg::JointState>::SharedPtr publisher_;
+    //TODO: add member variables to keep track of the encoder state. 
+    //Track both position and velocity
+    //Convert ticks to radians. Assume 48 ticks per rotation
 };
 
     
@@ -22,6 +25,7 @@ EncoderSubscriber::EncoderSubscriber()
   subscription_ = this->create_subscription<lab01::msg::Encoder>(
       "ticks", 10, std::bind(&EncoderSubscriber::topic_callback, this, _1));
   publisher_ = this->create_publisher<sensor_msgs::msg::JointState>("wheel_state", 10);
+  //TODO: create a timer that regularly publishes the current joint state for the wheel encoder
 }
 
 void EncoderSubscriber::topic_callback(const lab01::msg::Encoder & msg) const
@@ -32,7 +36,7 @@ void EncoderSubscriber::topic_callback(const lab01::msg::Encoder & msg) const
   //2. Update the ticks for position estimation
   //3. Calculate the velocity (hint: use finite differences and a timer
   //4. Convert to radian and radian per second
-  //5. Fill the data in the joint state message and publish
+  //5. Fill the data in the current joint state
 
 }
 
