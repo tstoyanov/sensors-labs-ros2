@@ -1,43 +1,41 @@
 /** And in this file we just define the subscriber node */
 #include "rclcpp/rclcpp.hpp"
-#include "std_msgs/msg/string.hpp"
+#include "sensor_msgs/msg/joint_state.hpp"
 
 using std::placeholders::_1;
 
-class MinimalSubscriber : public rclcpp::Node
+class OdometryNode : public rclcpp::Node
 {
   public:
-    MinimalSubscriber();
+    OdometryNode();
   private:
-    void topic_callback(const std_msgs::msg::String & msg) const;
-    rclcpp::Subscription<std_msgs::msg::String>::SharedPtr subscription_;
+    void topic_callback(const sensor_msgs::msg::JointState & msg) const;
+    rclcpp::Subscription<sensor_msgs::msg::JointState>::SharedPtr subscription_;
+    //TODO: Create a publisher that publishes nav_msgs/Odometry 
+    //TODO: Create a timer that publishes odometry at a regular rate
+    //TODO: Create members for internal model parameters
+    //TODO: Create a subscriber that keeps track of the nav_msgs/Odometry published by the reference system
+    //TODO: Create a service server triggered with an std_srvs/srv/Trigger and performs optimization of the model parameters. 
 };
 
     
-MinimalSubscriber::MinimalSubscriber()
+OdometryNode::OdometryNode()
 : Node("minimal_subscriber")
 {
-  subscription_ = this->create_subscription<std_msgs::msg::String>(
-      "topic", 10, std::bind(&MinimalSubscriber::topic_callback, this, _1));
+  subscription_ = this->create_subscription<sensor_msgs::msg::JointState>(
+      "joint_state", 10, std::bind(&OdometryNode::topic_callback, this, _1));
 }
 
-void MinimalSubscriber::topic_callback(const std_msgs::msg::String & msg) const
+void OdometryNode::topic_callback(const sensor_msgs::msg::JointState & msg) const
 {
-  RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
+  //TODO: process JointStates and integrate into new vehicle state
 }
 
 int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
 
-  // A different way to spin would be to create an executor.
-  // This is sometimes useful when you want to switch to multi-threaded execution
-  std::shared_ptr<rclcpp::Executor> executor = std::make_shared<rclcpp::executors::MultiThreadedExecutor>();
-
-  auto sub_node_ = std::make_shared<MinimalSubscriber>();
-
-  executor->add_node(sub_node_);
-  executor->spin();
+  rclcpp::spin(std::make_shared<OdometryNode>());
   
   rclcpp::shutdown();
   return 0;
