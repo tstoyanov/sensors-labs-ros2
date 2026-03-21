@@ -23,6 +23,17 @@ foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
+########## For message generation ################
+find_package(rosidl_default_generators REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/SampleMessage.msg"
+  DEPENDENCIES builtin_interfaces std_msgs
+)
+ament_export_dependencies(rosidl_default_runtime)
+rosidl_get_typesupport_target(cpp_typesupport_target ${PROJECT_NAME} "rosidl_typesupport_cpp")
+##################################################
+
 ################ example library ##################
 # add a library. This gets built and can be linked to inside and outside the package
 add_library(example_library SHARED
@@ -49,6 +60,8 @@ target_include_directories(publisher PUBLIC
   $<INSTALL_INTERFACE:include>)
 target_compile_features(publisher PUBLIC c_std_99 cxx_std_17)
 ament_target_dependencies(publisher PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
+#needed to use the custom message within this package
+target_link_libraries(publisher PUBLIC "${cpp_typesupport_target}")
 ##################################################
 
 
@@ -60,16 +73,6 @@ target_include_directories(subscriber PUBLIC
 target_compile_features(subscriber PUBLIC c_std_99 cxx_std_17)
 target_link_libraries(subscriber PUBLIC example_library)
 ament_target_dependencies(subscriber PUBLIC ${THIS_PACKAGE_INCLUDE_DEPENDS})
-##################################################
-
-########## For message generation ################
-find_package(rosidl_default_generators REQUIRED)
-find_package(builtin_interfaces REQUIRED)
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/SampleMessage.msg"
-  DEPENDENCIES builtin_interfaces std_msgs
-)
-ament_export_dependencies(rosidl_default_runtime)
 ##################################################
 
 ##############  Install targets ##################
