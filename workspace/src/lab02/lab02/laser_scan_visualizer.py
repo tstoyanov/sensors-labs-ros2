@@ -78,7 +78,7 @@ class LaserScanVisualizer(Node):
         # compute errors to ground-truth distance
         self.get_logger().info("Callback laser")
     
-    def scan_callback1(self, msg: LaserScan):
+    def scan_callback2(self, msg: LaserScan):
         #TODO: implement occupancy mapping logic here 
         #hint: you might want to define your own helper function for raytracing.
         self.get_logger().info("Callback laser")
